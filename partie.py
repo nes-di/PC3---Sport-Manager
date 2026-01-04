@@ -2,8 +2,14 @@
 Module de gestion des matchs
 """
 
+import os
 import random
 from database import get_connection
+
+
+def clear_screen():
+    """Efface l'écran de la console"""
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def jouer_match():
@@ -15,6 +21,7 @@ def jouer_match():
     4. Met à jour les stats des joueurs présents
     5. Diminue la durée de blessure des joueurs absents
     """
+    clear_screen()
     print("\n=== JOUER UN MATCH ===")
     
     conn = get_connection()
@@ -47,6 +54,7 @@ def jouer_match():
         print(f"\n❌ Pas assez de joueurs disponibles pour jouer un match 11v11")
         print(f"   Joueurs disponibles : {len(joueurs_disponibles)}/11")
         conn.close()
+        input("\nAppuyez sur Entrée pour revenir au menu...")
         return
     
     # Simulation du match
@@ -108,8 +116,10 @@ def jouer_match():
         
         conn.commit()
         print("\n✓ Match enregistré avec succès")
+        input("\nAppuyez sur Entrée pour revenir au menu...")
         
     except ValueError:
         print("❌ Erreur : Veuillez entrer des scores valides")
+        input("\nAppuyez sur Entrée pour revenir au menu...")
     
     conn.close()

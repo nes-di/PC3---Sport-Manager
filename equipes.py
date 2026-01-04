@@ -2,7 +2,13 @@
 Module de gestion des équipes
 """
 
+import os
 from database import get_connection
+
+
+def clear_screen():
+    """Efface l'écran de la console"""
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def afficher_mon_equipe():
@@ -10,6 +16,7 @@ def afficher_mon_equipe():
     Affiche tous les joueurs de mon équipe (OL) avec leur état
     État : "Disponible" ou "Blessé (reste X matchs)"
     """
+    clear_screen()
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -50,12 +57,14 @@ def afficher_mon_equipe():
         print(f"{nom:<15} {poste:<20} {vit:<5} {end:<5} {force:<5} {tech:<5} {etat:<25}")
     
     print()
+    input("\nAppuyez sur Entrée pour revenir au menu...")
 
 
 def afficher_historique():
     """
     Affiche l'historique de tous les matchs joués
     """
+    clear_screen()
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -70,6 +79,7 @@ def afficher_historique():
     
     if not matchs:
         print("\n📋 Aucun match joué pour le moment")
+        input("\nAppuyez sur Entrée pour revenir au menu...")
         return
     
     print("\n=== HISTORIQUE DES MATCHS ===")
@@ -90,3 +100,4 @@ def afficher_historique():
         print(f"{adversaire:<15} {score:<15} {resultat:<15}")
     
     print()
+    input("\nAppuyez sur Entrée pour revenir au menu...")
