@@ -26,7 +26,7 @@ def afficher_mon_equipe():
     
     # Récupération de tous les joueurs de l'OL
     cursor.execute("""
-        SELECT nom, prenom, poste, vitesse, endurance, force, technique, duree_blessure
+        SELECT nom, poste, vitesse, endurance, force, technique, duree_blessure
         FROM Joueur
         WHERE id_equipe = ?
         ORDER BY poste, nom
