@@ -29,8 +29,7 @@ def reset_database():
 def insert_seed_data():
     """
     Insère les données de départ (équipes et joueurs)
-    - OL : Mon équipe avec tous les joueurs
-    - PSG : Équipe adverse avec quelques joueurs
+    - OL, PSG, OM, RACING : 4 équipes avec 18 joueurs chacune
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -38,6 +37,8 @@ def insert_seed_data():
     # Insertion des équipes
     cursor.execute("INSERT INTO Equipe (nom, coach) VALUES (?, ?)", ("OL", "Coach OL"))
     cursor.execute("INSERT INTO Equipe (nom, coach) VALUES (?, ?)", ("PSG", "Coach PSG"))
+    cursor.execute("INSERT INTO Equipe (nom, coach) VALUES (?, ?)", ("OM", "Coach OM"))
+    cursor.execute("INSERT INTO Equipe (nom, coach) VALUES (?, ?)", ("RACING", "Coach RACING"))
     
     # Récupération des IDs des équipes
     cursor.execute("SELECT id FROM Equipe WHERE nom = 'OL'")
@@ -46,33 +47,35 @@ def insert_seed_data():
     cursor.execute("SELECT id FROM Equipe WHERE nom = 'PSG'")
     id_psg = cursor.fetchone()[0]
     
-    # Insertion des joueurs de l'OL (Mon équipe) - 18 joueurs (11 titulaires + 7 remplaçants)
+    cursor.execute("SELECT id FROM Equipe WHERE nom = 'OM'")
+    id_om = cursor.fetchone()[0]
+    
+    cursor.execute("SELECT id FROM Equipe WHERE nom = 'RACING'")
+    id_racing = cursor.fetchone()[0]
+    
+    # ÉQUIPE 1 : OL - 18 joueurs (11 titulaires + 7 remplaçants)
     joueurs_ol = [
         # === TITULAIRES (11) ===
-        # Gardien
-        ("Lopes", "Anthony", "Gardien", 15, 50, 70, 45),
-        # Défenseurs
-        ("Lukeba", "Castello", "Défenseur Central", 25, 55, 65, 35),
-        ("Tagliafico", "Nicolas", "Défenseur Central", 20, 60, 70, 40),
-        ("Gusto", "Malo", "Défenseur Latéral Droit", 60, 55, 45, 50),
-        ("Henrique", "Alex", "Défenseur Latéral Gauche", 55, 60, 50, 45),
-        # Milieux
-        ("Thuram", "Khéphren", "Milieu Défensif", 40, 70, 55, 60),
-        ("Caqueret", "Maxence", "Milieu Central", 45, 65, 40, 70),
-        ("Tolisso", "Corentin", "Milieu Offensif", 35, 60, 50, 75),
-        # Attaquants
-        ("Cherki", "Rayan", "Ailier Gauche", 70, 50, 30, 80),
-        ("Fofana", "Malick", "Ailier Droit", 75, 55, 35, 70),
-        ("Lacazette", "Alexandre", "Attaquant Centre", 40, 60, 60, 85),
+        ("Olivier", "Olivier", "Gardien", 15, 5, 70, 10),
+        ("Mehdi", "Mehdi", "Défenseur Central", 10, 40, 40, 10),
+        ("Paul", "Paul", "Défenseur Central", 10, 40, 40, 10),
+        ("Ousmane", "Ousmane", "Arrière Droit", 40, 50, 5, 5),
+        ("Rayan", "Rayan", "Arrière Gauche", 40, 50, 5, 5),
+        ("Ilyes", "Ilyes", "Milieu Défensif", 10, 40, 40, 10),
+        ("Abdel", "Abdel", "Milieu Central", 5, 50, 10, 35),
+        ("Kilyan", "Kilyan", "Milieu Central", 5, 50, 10, 35),
+        ("Evann", "Evann", "Ailier Gauche", 65, 5, 5, 25),
+        ("Süleyman", "Süleyman", "Ailier Droit", 65, 5, 5, 25),
+        ("Emre", "Emre", "Attaquant", 10, 10, 30, 50),
         
         # === REMPLAÇANTS (7) ===
-        ("Perri", "Lucas", "Gardien", 10, 45, 65, 35),
-        ("Mata", "Clinton", "Défenseur", 30, 50, 55, 30),
-        ("Diomandé", "Sinaly", "Défenseur", 25, 45, 60, 25),
-        ("Lepenant", "Johann", "Milieu", 30, 55, 40, 50),
-        ("Maitland-Niles", "Ainsley", "Milieu", 50, 50, 35, 55),
-        ("Nuamah", "Ernest", "Attaquant", 65, 40, 25, 60),
-        ("Mikautadze", "Georges", "Attaquant", 35, 45, 50, 65)
+        ("Martin", "Martin", "Remplaçant", 10, 70, 10, 10),
+        ("Mike", "Mike", "Remplaçant", 10, 50, 10, 30),
+        ("Wu", "Wu", "Remplaçant", 60, 10, 25, 5),
+        ("Georges", "Georges", "Remplaçant", 10, 5, 75, 10),
+        ("Thomas", "Thomas", "Remplaçant", 10, 40, 40, 10),
+        ("Matthieu", "Matthieu", "Remplaçant", 55, 30, 5, 20),
+        ("Cristiano", "Cristiano", "Remplaçant", 30, 15, 15, 40)
     ]
     
     for nom, prenom, poste, vitesse, endurance, force, technique in joueurs_ol:
@@ -81,33 +84,79 @@ def insert_seed_data():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
         """, (id_ol, nom, prenom, poste, vitesse, endurance, force, technique))
     
-    # Insertion des joueurs du PSG (Équipe adverse) - 18 joueurs (11 titulaires + 7 remplaçants)
+    # ÉQUIPE 2 : PSG - 18 joueurs (11 titulaires + 7 remplaçants)
     joueurs_psg = [
         # === TITULAIRES (11) ===
-        # Gardien
-        ("Donnarumma", "Gianluigi", "Gardien", 20, 55, 75, 50),
-        # Défenseurs
-        ("Marquinhos", "Marcos", "Défenseur Central", 25, 65, 75, 55),
-        ("Skriniar", "Milan", "Défenseur Central", 20, 60, 80, 50),
-        ("Hakimi", "Achraf", "Défenseur Latéral Droit", 85, 60, 50, 65),
-        ("Mendes", "Nuno", "Défenseur Latéral Gauche", 60, 65, 55, 50),
-        # Milieux
-        ("Vitinha", "Vítor", "Milieu Défensif", 45, 75, 45, 75),
-        ("Zaïre-Emery", "Warren", "Milieu Central", 50, 70, 40, 80),
-        ("Ruiz", "Fabián", "Milieu Offensif", 40, 65, 50, 85),
-        # Attaquants
-        ("Dembélé", "Ousmane", "Ailier Gauche", 90, 60, 40, 85),
-        ("Barcola", "Bradley", "Ailier Droit", 85, 65, 45, 75),
-        ("Gonçalo Ramos", "Gonçalo", "Attaquant Centre", 50, 65, 70, 80),
+        ("Victor", "Victor", "Gardien", 15, 5, 70, 10),
+        ("Yanis", "Yanis", "Défenseur Central", 10, 40, 40, 10),
+        ("Hugo", "Hugo", "Défenseur Central", 10, 40, 40, 10),
+        ("Ibrahim", "Ibrahim", "Arrière Droit", 40, 50, 5, 5),
+        ("Samy", "Samy", "Arrière Gauche", 40, 50, 5, 5),
+        ("Kamel", "Kamel", "Milieu Défensif", 10, 40, 40, 10),
+        ("Nassim", "Nassim", "Milieu Central", 5, 50, 10, 35),
+        ("Adem", "Adem", "Milieu Central", 5, 50, 10, 35),
+        ("Noah", "Noah", "Ailier Gauche", 65, 5, 5, 25),
+        ("Amir", "Amir", "Ailier Droit", 65, 5, 5, 25),
+        ("Lucas", "Lucas", "Attaquant", 10, 10, 30, 50),
         
         # === REMPLAÇANTS (7) ===
-        ("Navas", "Keylor", "Gardien", 15, 50, 70, 45),
-        ("Mukiele", "Nordi", "Défenseur", 55, 60, 60, 40),
-        ("Beraldo", "Lucas", "Défenseur", 30, 55, 65, 35),
-        ("Ugarte", "Manuel", "Milieu", 40, 70, 60, 60),
-        ("Soler", "Carlos", "Milieu", 35, 60, 45, 70),
-        ("Asensio", "Marco", "Attaquant", 55, 55, 40, 80),
-        ("Kolo Muani", "Randal", "Attaquant", 65, 60, 65, 70)
+        ("Julien", "Julien", "Remplaçant", 10, 70, 10, 10),
+        ("Alex", "Alex", "Remplaçant", 10, 50, 10, 30),
+        ("Léo", "Léo", "Remplaçant", 60, 10, 25, 5),
+        ("Bruno", "Bruno", "Remplaçant", 10, 5, 75, 10),
+        ("Maxime", "Maxime", "Remplaçant", 10, 40, 40, 10),
+        ("Enzo", "Enzo", "Remplaçant", 55, 30, 5, 20),
+        ("Raphaël", "Raphaël", "Remplaçant", 30, 15, 15, 40)
+    ]
+    
+    # ÉQUIPE 3 : OM - 18 joueurs (11 titulaires + 7 remplaçants)
+    joueurs_om = [
+        # === TITULAIRES (11) ===
+        ("Clément", "Clément", "Gardien", 15, 5, 70, 10),
+        ("Bilal", "Bilal", "Défenseur Central", 10, 40, 40, 10),
+        ("Romain", "Romain", "Défenseur Central", 10, 40, 40, 10),
+        ("Moussa", "Moussa", "Arrière Droit", 40, 50, 5, 5),
+        ("Anis", "Anis", "Arrière Gauche", 40, 50, 5, 5),
+        ("Walid", "Walid", "Milieu Défensif", 10, 40, 40, 10),
+        ("Youssef", "Youssef", "Milieu Central", 5, 50, 10, 35),
+        ("Ismaël", "Ismaël", "Milieu Central", 5, 50, 10, 35),
+        ("Ethan", "Ethan", "Ailier Gauche", 65, 5, 5, 25),
+        ("Farid", "Farid", "Ailier Droit", 65, 5, 5, 25),
+        ("Adam", "Adam", "Attaquant", 10, 10, 30, 50),
+        
+        # === REMPLAÇANTS (7) ===
+        ("Antoine", "Antoine", "Remplaçant", 10, 70, 10, 10),
+        ("Nicolas", "Nicolas", "Remplaçant", 10, 50, 10, 30),
+        ("Kévin", "Kévin", "Remplaçant", 60, 10, 25, 5),
+        ("Patrick", "Patrick", "Remplaçant", 10, 5, 75, 10),
+        ("Sébastien", "Sébastien", "Remplaçant", 10, 40, 40, 10),
+        ("Mathis", "Mathis", "Remplaçant", 55, 30, 5, 20),
+        ("Damien", "Damien", "Remplaçant", 30, 15, 15, 40)
+    ]
+    
+    # ÉQUIPE 4 : RACING - 18 joueurs (11 titulaires + 7 remplaçants)
+    joueurs_racing = [
+        # === TITULAIRES (11) ===
+        ("Benjamin", "Benjamin", "Gardien", 15, 5, 70, 10),
+        ("Rachid", "Rachid", "Défenseur Central", 10, 40, 40, 10),
+        ("Florian", "Florian", "Défenseur Central", 10, 40, 40, 10),
+        ("Hamza", "Hamza", "Arrière Droit", 40, 50, 5, 5),
+        ("Yacine", "Yacine", "Arrière Gauche", 40, 50, 5, 5),
+        ("Mehmet", "Mehmet", "Milieu Défensif", 10, 40, 40, 10),
+        ("Karim", "Karim", "Milieu Central", 5, 50, 10, 35),
+        ("Ali", "Ali", "Milieu Central", 5, 50, 10, 35),
+        ("Mathéo", "Mathéo", "Ailier Gauche", 65, 5, 5, 25),
+        ("Sofiane", "Sofiane", "Ailier Droit", 65, 5, 5, 25),
+        ("Nolan", "Nolan", "Attaquant", 10, 10, 30, 50),
+        
+        # === REMPLAÇANTS (7) ===
+        ("Louis", "Louis", "Remplaçant", 10, 70, 10, 10),
+        ("Pierre", "Pierre", "Remplaçant", 10, 50, 10, 30),
+        ("Théo", "Théo", "Remplaçant", 60, 10, 25, 5),
+        ("Henri", "Henri", "Remplaçant", 10, 5, 75, 10),
+        ("Quentin", "Quentin", "Remplaçant", 10, 40, 40, 10),
+        ("Baptiste", "Baptiste", "Remplaçant", 55, 30, 5, 20),
+        ("Adrien", "Adrien", "Remplaçant", 30, 15, 15, 40)
     ]
     
     for nom, prenom, poste, vitesse, endurance, force, technique in joueurs_psg:
@@ -116,11 +165,25 @@ def insert_seed_data():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
         """, (id_psg, nom, prenom, poste, vitesse, endurance, force, technique))
     
+    for nom, prenom, poste, vitesse, endurance, force, technique in joueurs_om:
+        cursor.execute("""
+            INSERT INTO Joueur (id_equipe, nom, prenom, poste, vitesse, endurance, force, technique, duree_blessure)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+        """, (id_om, nom, prenom, poste, vitesse, endurance, force, technique))
+    
+    for nom, prenom, poste, vitesse, endurance, force, technique in joueurs_racing:
+        cursor.execute("""
+            INSERT INTO Joueur (id_equipe, nom, prenom, poste, vitesse, endurance, force, technique, duree_blessure)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+        """, (id_racing, nom, prenom, poste, vitesse, endurance, force, technique))
+    
     conn.commit()
     conn.close()
     print("✓ Données de test insérées avec succès")
     print(f"  - {len(joueurs_ol)} joueurs OL")
     print(f"  - {len(joueurs_psg)} joueurs PSG")
+    print(f"  - {len(joueurs_om)} joueurs OM")
+    print(f"  - {len(joueurs_racing)} joueurs RACING")
 
 
 if __name__ == "__main__":
