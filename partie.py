@@ -97,9 +97,29 @@ def jouer_match():
             nom_complet = f"{joueur['prenom']} {joueur['nom']}"
             print(f"  ✓ {nom_complet} : +{bonus} {competence}")
         
+        # Blessures aléatoires pendant le match (15% de chance par joueur ayant joué)
+        print("\n🏥 Bilan médical...")
+        blessures_survenues = False
+        for joueur in joueurs_disponibles:
+            # 15% de chance de se blesser pendant le match
+            if random.random() < 0.15:
+                duree_blessure = random.randint(1, 4)  # Blessure de 1 à 4 matchs
+                cursor.execute("""
+                    UPDATE Joueur
+                    SET duree_blessure = ?
+                    WHERE id = ?
+                """, (duree_blessure, joueur['id']))
+                
+                nom_complet = f"{joueur['prenom']} {joueur['nom']}"
+                print(f"  🤕 {nom_complet} s'est blessé ! (absent {duree_blessure} match{'s' if duree_blessure > 1 else ''})")
+                blessures_survenues = True
+        
+        if not blessures_survenues:
+            print("  ✓ Aucune blessure à signaler")
+        
         # Diminution de la durée de blessure pour tous les joueurs blessés
         if joueurs_blesses:
-            print("\n🏥 Récupération des blessés...")
+            print("\n💊 Récupération des anciens blessés...")
             cursor.execute("""
                 UPDATE Joueur
                 SET duree_blessure = MAX(duree_blessure - 1, 0)
