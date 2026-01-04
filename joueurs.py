@@ -21,7 +21,6 @@ def ajouter_joueur():
     print("\n=== AJOUTER UN NOUVEAU JOUEUR ===")
     
     # Saisie des informations
-    prenom = input("Prénom du joueur : ").strip()
     nom = input("Nom du joueur : ").strip()
     poste = input("Poste (Attaquant/Milieu/Défenseur/Gardien/Ailier) : ").strip()
     
@@ -46,14 +45,14 @@ def ajouter_joueur():
         id_ol = cursor.fetchone()[0]
         
         cursor.execute("""
-            INSERT INTO Joueur (id_equipe, nom, prenom, poste, vitesse, endurance, force, technique, duree_blessure)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
-        """, (id_ol, nom, prenom, poste, vitesse, endurance, force, technique))
+            INSERT INTO Joueur (id_equipe, nom, poste, vitesse, endurance, force, technique, duree_blessure)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0)
+        """, (id_ol, nom, poste, vitesse, endurance, force, technique))
         
         conn.commit()
         conn.close()
         
-        print(f"✓ {prenom} {nom} a été ajouté à l'équipe !")
+        print(f"✓ {nom} a été ajouté à l'équipe !")
         input("\nAppuyez sur Entrée pour revenir au menu...")
         
     except ValueError:
@@ -78,7 +77,7 @@ def provoquer_blessure():
     
     # Récupération des joueurs disponibles (non blessés)
     cursor.execute("""
-        SELECT id, prenom, nom, poste
+        SELECT id, nom, poste
         FROM Joueur
         WHERE id_equipe = ? AND duree_blessure = 0
     """, (id_ol,))
@@ -104,6 +103,5 @@ def provoquer_blessure():
     conn.commit()
     conn.close()
     
-    nom_complet = f"{joueur['prenom']} {joueur['nom']}"
-    print(f"🤕 {nom_complet} ({joueur['poste']}) est blessé pour 3 matchs")
+    print(f"🤕 {joueur['nom']} ({joueur['poste']}) est blessé pour 3 matchs")
     input("\nAppuyez sur Entrée pour revenir au menu...")

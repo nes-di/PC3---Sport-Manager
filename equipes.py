@@ -40,7 +40,7 @@ def afficher_mon_equipe():
     print("-" * 90)
     
     for joueur in joueurs:
-        nom = f"{joueur['prenom']} {joueur['nom']}"
+        nom = joueur['nom']
         poste = joueur['poste']
         vit = joueur['vitesse']
         end = joueur['endurance']

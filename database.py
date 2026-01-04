@@ -34,13 +34,12 @@ def create_tables():
         )
     """)
     
-    # Table Joueur : id, id_equipe, nom, prenom, poste, stats, duree_blessure
+    # Table Joueur : id, id_equipe, nom, poste, stats, duree_blessure
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Joueur (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_equipe INTEGER NOT NULL,
             nom TEXT NOT NULL,
-            prenom TEXT NOT NULL,
             poste TEXT NOT NULL,
             vitesse INTEGER DEFAULT 0,
             endurance INTEGER DEFAULT 0,

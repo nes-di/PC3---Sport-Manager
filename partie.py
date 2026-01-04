@@ -33,7 +33,7 @@ def jouer_match():
     
     # Vérification des joueurs disponibles
     cursor.execute("""
-        SELECT id, prenom, nom, poste, duree_blessure
+        SELECT id, nom, poste, duree_blessure
         FROM Joueur
         WHERE id_equipe = ?
     """, (id_ol,))
@@ -47,8 +47,7 @@ def jouer_match():
     if joueurs_blesses:
         print("\n🤕 Joueurs blessés (ne jouent pas) :")
         for joueur in joueurs_blesses:
-            nom_complet = f"{joueur['prenom']} {joueur['nom']}"
-            print(f"  - {nom_complet} ({joueur['poste']}) - encore {joueur['duree_blessure']} match(s)")
+            print(f"  - {joueur['nom']} ({joueur['poste']}) - encore {joueur['duree_blessure']} match(s)")
     
     if len(joueurs_disponibles) < 11:
         print(f"\n❌ Pas assez de joueurs disponibles pour jouer un match 11v11")
@@ -94,8 +93,7 @@ def jouer_match():
                 WHERE id = ?
             """, (bonus, joueur['id']))
             
-            nom_complet = f"{joueur['prenom']} {joueur['nom']}"
-            print(f"  ✓ {nom_complet} : +{bonus} {competence}")
+            print(f"  ✓ {joueur['nom']} : +{bonus} {competence}")
         
         # Blessures aléatoires pendant le match (15% de chance par joueur ayant joué)
         print("\n🏥 Bilan médical...")
@@ -110,8 +108,7 @@ def jouer_match():
                     WHERE id = ?
                 """, (duree_blessure, joueur['id']))
                 
-                nom_complet = f"{joueur['prenom']} {joueur['nom']}"
-                print(f"  🤕 {nom_complet} s'est blessé ! (absent {duree_blessure} match{'s' if duree_blessure > 1 else ''})")
+                print(f"  🤕 {joueur['nom']} s'est blessé ! (absent {duree_blessure} match{'s' if duree_blessure > 1 else ''})")
                 blessures_survenues = True
         
         if not blessures_survenues:
@@ -128,11 +125,10 @@ def jouer_match():
             
             for joueur in joueurs_blesses:
                 nouvelle_duree = max(joueur['duree_blessure'] - 1, 0)
-                nom_complet = f"{joueur['prenom']} {joueur['nom']}"
                 if nouvelle_duree == 0:
-                    print(f"  ✓ {nom_complet} est rétabli !")
+                    print(f"  ✓ {joueur['nom']} est rétabli !")
                 else:
-                    print(f"  ⏳ {nom_complet} : encore {nouvelle_duree} match(s)")
+                    print(f"  ⏳ {joueur['nom']} : encore {nouvelle_duree} match(s)")
         
         conn.commit()
         print("\n✓ Match enregistré avec succès")
