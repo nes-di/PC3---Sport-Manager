@@ -14,12 +14,13 @@ def clear_screen():
 
 def jouer_match():
     """
-    Fonction principale pour jouer un match contre le PSG
-    1. Vérifie que les joueurs blessés ne jouent pas
-    2. Simule le match
-    3. Demande le score final
-    4. Met à jour les stats des joueurs présents
-    5. Diminue la durée de blessure des joueurs absents
+    Fonction principale pour jouer un match
+    1. Choix de l'adversaire
+    2. Vérifie que les joueurs blessés ne jouent pas
+    3. Simule le match
+    4. Demande le score final
+    5. Met à jour les stats des joueurs présents
+    6. Diminue la durée de blessure des joueurs absents
     """
     clear_screen()
     print("\n=== JOUER UN MATCH ===")
@@ -30,6 +31,28 @@ def jouer_match():
     # Récupération de l'ID de l'OL
     cursor.execute("SELECT id FROM Equipe WHERE nom = 'OL'")
     id_ol = cursor.fetchone()[0]
+    
+    # Choix de l'adversaire
+    cursor.execute("SELECT nom FROM Equipe WHERE nom != 'OL'")
+    equipes_adverses = [row['nom'] for row in cursor.fetchall()]
+    
+    print("\n📋 Choisissez votre adversaire :")
+    for i, equipe in enumerate(equipes_adverses, 1):
+        print(f"  {i}. {equipe}")
+    
+    try:
+        choix = int(input("\nVotre choix : ").strip())
+        if choix < 1 or choix > len(equipes_adverses):
+            print("❌ Choix invalide")
+            conn.close()
+            input("\nAppuyez sur Entrée pour revenir au menu...")
+            return
+        adversaire = equipes_adverses[choix - 1]
+    except ValueError:
+        print("❌ Veuillez entrer un nombre valide")
+        conn.close()
+        input("\nAppuyez sur Entrée pour revenir au menu...")
+        return
     
     # Vérification des joueurs disponibles
     cursor.execute("""
@@ -57,27 +80,27 @@ def jouer_match():
         return
     
     # Simulation du match
-    print("\n⚽ Match en cours contre le PSG...")
+    print(f"\n⚽ Match en cours contre {adversaire}...")
     print("   ...")
     
     # Saisie du score final
     try:
         score_ol = int(input("\nScore de l'OL : "))
-        score_psg = int(input("Score du PSG : "))
+        score_adversaire_input = int(input(f"Score de {adversaire} : "))
         
         # Enregistrement du match
         cursor.execute("""
             INSERT INTO Rencontre (adversaire, score_mon_equipe, score_adversaire)
             VALUES (?, ?, ?)
-        """, ("PSG", score_ol, score_psg))
+        """, (adversaire, score_ol, score_adversaire_input))
         
         # Affichage du résultat
-        if score_ol > score_psg:
-            print(f"\n🎉 VICTOIRE ! {score_ol}-{score_psg}")
-        elif score_ol < score_psg:
-            print(f"\n😞 DÉFAITE... {score_ol}-{score_psg}")
+        if score_ol > score_adversaire_input:
+            print(f"\n🎉 VICTOIRE ! {score_ol}-{score_adversaire_input}")
+        elif score_ol < score_adversaire_input:
+            print(f"\n😞 DÉFAITE... {score_ol}-{score_adversaire_input}")
         else:
-            print(f"\n🤝 MATCH NUL {score_ol}-{score_psg}")
+            print(f"\n🤝 MATCH NUL {score_ol}-{score_adversaire_input}")
         
         # Évolution des joueurs ayant joué (bonus aléatoire sur une compétence)
         print("\n📈 Évolution des joueurs...")
