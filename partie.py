@@ -83,11 +83,32 @@ def jouer_match():
     print(f"\n⚽ Match en cours contre {adversaire}...")
     print("   ...")
     
-    # Saisie du score final
+    # Saisie du score final avec possibilité de réessayer
+    score_ol = None
+    score_adversaire_input = None
+    
+    while score_ol is None or score_adversaire_input is None:
+        try:
+            if score_ol is None:
+                score_ol = int(input("\nScore de l'OL : "))
+            if score_adversaire_input is None:
+                score_adversaire_input = int(input(f"Score de {adversaire} : "))
+            
+            # Si on arrive ici, les deux scores sont valides
+            break
+            
+        except ValueError:
+            print("❌ Erreur : Veuillez entrer des nombres valides")
+            reessayer = input("Voulez-vous réessayer ? (o/n) : ").strip().lower()
+            if reessayer != 'o':
+                conn.close()
+                input("\nAppuyez sur Entrée pour revenir au menu...")
+                return
+            # Réinitialiser pour redemander les deux scores
+            score_ol = None
+            score_adversaire_input = None
+    
     try:
-        score_ol = int(input("\nScore de l'OL : "))
-        score_adversaire_input = int(input(f"Score de {adversaire} : "))
-        
         # Enregistrement du match
         cursor.execute("""
             INSERT INTO Rencontre (adversaire, score_mon_equipe, score_adversaire)
@@ -157,8 +178,8 @@ def jouer_match():
         print("\n✓ Match enregistré avec succès")
         input("\nAppuyez sur Entrée pour revenir au menu...")
         
-    except ValueError:
-        print("❌ Erreur : Veuillez entrer des scores valides")
+    except Exception as e:
+        print(f"❌ Erreur lors de l'enregistrement : {e}")
         input("\nAppuyez sur Entrée pour revenir au menu...")
     
     conn.close()
