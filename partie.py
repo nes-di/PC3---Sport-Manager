@@ -83,37 +83,20 @@ def jouer_match():
     print(f"\n⚽ Match en cours contre {adversaire}...")
     print("   ...")
     
-    # Saisie du score final avec possibilité de réessayer
-    score_ol = None
-    score_adversaire_input = None
-    
-    while score_ol is None or score_adversaire_input is None:
+    # Saisie du score final avec boucle jusqu'à obtenir des valeurs valides
+    while True:
         try:
-            if score_ol is None:
-                score_ol = int(input("\nScore de l'OL : "))
-            if score_adversaire_input is None:
-                score_adversaire_input = int(input(f"Score de {adversaire} : "))
-            
-            # Si on arrive ici, les deux scores sont valides
-            break
-            
+            score_ol = int(input("\nScore de l'OL : "))
+            score_adversaire_input = int(input(f"Score de {adversaire} : "))
+            break  # Si on arrive ici, les scores sont valides
         except ValueError:
-            print("❌ Erreur : Veuillez entrer des nombres valides")
-            reessayer = input("Voulez-vous réessayer ? (o/n) : ").strip().lower()
-            if reessayer != 'o':
-                conn.close()
-                input("\nAppuyez sur Entrée pour revenir au menu...")
-                return
-            # Réinitialiser pour redemander les deux scores
-            score_ol = None
-            score_adversaire_input = None
+            print("❌ Veuillez entrer des nombres valides. Réessayez.")
     
-    try:
-        # Enregistrement du match
-        cursor.execute("""
-            INSERT INTO Rencontre (adversaire, score_mon_equipe, score_adversaire)
-            VALUES (?, ?, ?)
-        """, (adversaire, score_ol, score_adversaire_input))
+    # Enregistrement du match
+    cursor.execute("""
+        INSERT INTO Rencontre (adversaire, score_mon_equipe, score_adversaire)
+        VALUES (?, ?, ?)
+    """, (adversaire, score_ol, score_adversaire_input))
         
         # Affichage du résultat
         if score_ol > score_adversaire_input:
@@ -178,8 +161,4 @@ def jouer_match():
         print("\n✓ Match enregistré avec succès")
         input("\nAppuyez sur Entrée pour revenir au menu...")
         
-    except Exception as e:
-        print(f"❌ Erreur lors de l'enregistrement : {e}")
-        input("\nAppuyez sur Entrée pour revenir au menu...")
-    
     conn.close()
