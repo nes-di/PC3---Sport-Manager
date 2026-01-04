@@ -6,7 +6,7 @@ Point d'entrée de l'application avec la boucle du menu
 from database import get_connection
 from menu import afficher_menu
 from equipes import afficher_mon_equipe, afficher_historique
-from joueurs import ajouter_joueur, provoquer_blessure
+from joueurs import ajouter_joueur
 from partie import jouer_match
 
 
@@ -15,7 +15,7 @@ def main():
     Fonction principale : Boucle du menu
     """
     print("\n🎮 Bienvenue dans SPORT MANAGER !")
-    print("Gérez votre équipe de l'OL et affrontez le PSG\n")
+    print("Gérez votre équipe de l'OL !\n")
     
     # Vérification que la base est initialisée
     try:
@@ -46,15 +46,13 @@ def main():
         elif choix == "3":
             jouer_match()
         elif choix == "4":
-            provoquer_blessure()
-        elif choix == "5":
             afficher_historique()
-        elif choix == "6":
+        elif choix == "5":
             print("\n👋 Merci d'avoir joué à Sport Manager !")
             print("À bientôt !\n")
             break
         else:
-            print("\n❌ Choix invalide. Veuillez choisir entre 1 et 6.")
+            print("\n❌ Choix invalide. Veuillez choisir entre 1 et 5.")
 
 
 if __name__ == "__main__":
