@@ -15,39 +15,88 @@ def clear_screen():
 def ajouter_joueur():
     """
     Fonction CRUD : Permet d'ajouter un nouveau joueur à l'équipe OL
-    Demande à l'utilisateur les informations du joueur (nom, poste, stats)
+    Demande à l'utilisateur les informations du joueur (nom, prénom, poste, stats)
     """
     clear_screen()
     print("\n=== AJOUTER UN NOUVEAU JOUEUR ===")
     
-    # Saisie des informations
-    nom = input("Nom du joueur : ").strip()
-    poste = input("Poste (Attaquant/Milieu/Défenseur/Gardien/Ailier) : ").strip()
+    conn = get_connection()
+    cursor = conn.cursor()
     
     try:
-        vitesse = int(input("Vitesse (0-100) : "))
-        endurance = int(input("Endurance (0-100) : "))
-        force = int(input("Force (0-100) : "))
-        technique = int(input("Technique (0-100) : "))
-        
-        # Insertion dans la base de données
-        conn = get_connection()
-        cursor = conn.cursor()
-        
         # Récupération de l'ID de l'OL
-        cursor.execute("SELECT id FROM Equipe WHERE nom = 'OL'")
-        id_ol = cursor.fetchone()[0]
+        cursor.execute("SELECT id_equipe FROM Equipe WHERE nom = 'OL'")
+        result = cursor.fetchone()
+        if not result:
+            print("❌ Équipe OL non trouvée")
+            conn.close()
+            input("\nAppuyez sur Entrée pour revenir au menu...")
+            return
+        
+        id_ol = result['id_equipe']
+        
+        # Saisie des informations
+        prenom = input("Prénom du joueur : ").strip()
+        nom = input("Nom du joueur : ").strip()
+        
+        # Affichage des postes disponibles
+        cursor.execute("SELECT id_poste, nom_poste FROM Poste")
+        postes = cursor.fetchall()
+        
+        print("\nPostes disponibles :")
+        for i, poste in enumerate(postes, 1):
+            print(f"  {i}. {poste['nom_poste']}")
+        
+        choix_poste = int(input("\nChoisissez le poste (numéro) : "))
+        id_poste = postes[choix_poste - 1]['id_poste']
+        
+        # Saisie des compétences
+        print("\nCompétences (0-100) :")
+        vitesse = int(input("Vitesse : "))
+        endurance = int(input("Endurance : "))
+        force = int(input("Force : "))
+        technique = int(input("Technique : "))
+        
+        # Insertion du joueur
+        cursor.execute("""
+            INSERT INTO Joueurs (id_equipe, nom, prenom, id_poste, statut)
+            VALUES (?, ?, ?, ?, 'présent')
+        """, (id_ol, nom, prenom, id_poste))
+        
+        id_joueur = cursor.lastrowid
+        
+        # Récupération des IDs des compétences
+        cursor.execute("SELECT id_competence, nom FROM Competence")
+        competences = {row['nom']: row['id_competence'] for row in cursor.fetchall()}
+        
+        # Insertion des compétences du joueur
+        cursor.execute("""
+            INSERT INTO Joueur_competence (id_joueur, id_competence, niveau)
+            VALUES (?, ?, ?)
+        """, (id_joueur, competences['Vitesse'], min(max(vitesse, 0), 100)))
         
         cursor.execute("""
-            INSERT INTO Joueur (id_equipe, nom, poste, vitesse, endurance, force, technique, duree_blessure)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 0)
-        """, (id_ol, nom, poste, vitesse, endurance, force, technique))
+            INSERT INTO Joueur_competence (id_joueur, id_competence, niveau)
+            VALUES (?, ?, ?)
+        """, (id_joueur, competences['Endurance'], min(max(endurance, 0), 100)))
+        
+        cursor.execute("""
+            INSERT INTO Joueur_competence (id_joueur, id_competence, niveau)
+            VALUES (?, ?, ?)
+        """, (id_joueur, competences['Force'], min(max(force, 0), 100)))
+        
+        cursor.execute("""
+            INSERT INTO Joueur_competence (id_joueur, id_competence, niveau)
+            VALUES (?, ?, ?)
+        """, (id_joueur, competences['Technique'], min(max(technique, 0), 100)))
         
         conn.commit()
+        
+        print(f"\n✓ {prenom} {nom} a été ajouté à l'équipe !")
+        input("\nAppuyez sur Entrée pour revenir au menu...")
+        
+    except Exception as e:
+        print(f"\n❌ Erreur lors de l'ajout du joueur : {e}")
+        input("\nAppuyez sur Entrée pour revenir au menu...")
+    finally:
         conn.close()
-        
-        print(f"✓ {nom} a été ajouté à l'équipe !")
-        input("\nAppuyez sur Entrée pour revenir au menu...")
-        
-    except:
-        input("\nAppuyez sur Entrée pour revenir au menu...")
