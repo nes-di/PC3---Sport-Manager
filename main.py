@@ -17,23 +17,6 @@ def main():
     print("\n🎮 Bienvenue dans SPORT MANAGER !")
     print("Gérez votre équipe de l'OL !\n")
     
-    # Vérification que la base est initialisée
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM Equipe")
-        nb_equipes = cursor.fetchone()[0]
-        conn.close()
-        
-        if nb_equipes == 0:
-            print("⚠️  La base de données est vide.")
-            print("   Veuillez lancer 'python init_db.py' d'abord.\n")
-            return
-    except:
-        print("⚠️  La base de données n'existe pas.")
-        print("   Veuillez lancer 'python init_db.py' d'abord.\n")
-        return
-    
     # Boucle principale du menu
     while True:
         afficher_menu()
@@ -51,8 +34,6 @@ def main():
             print("\n👋 Merci d'avoir joué à Sport Manager !")
             print("À bientôt !\n")
             break
-        else:
-            print("\n❌ Choix invalide. Veuillez choisir entre 1 et 5.")
 
 
 if __name__ == "__main__":

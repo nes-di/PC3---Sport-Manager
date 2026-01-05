@@ -30,12 +30,6 @@ def ajouter_joueur():
         force = int(input("Force (0-100) : "))
         technique = int(input("Technique (0-100) : "))
         
-        # Validation des valeurs
-        if not all(0 <= stat <= 100 for stat in [vitesse, endurance, force, technique]):
-            print("❌ Erreur : Les stats doivent être entre 0 et 100")
-            input("\nAppuyez sur Entrée pour revenir au menu...")
-            return
-        
         # Insertion dans la base de données
         conn = get_connection()
         cursor = conn.cursor()
@@ -55,8 +49,7 @@ def ajouter_joueur():
         print(f"✓ {nom} a été ajouté à l'équipe !")
         input("\nAppuyez sur Entrée pour revenir au menu...")
         
-    except ValueError:
-        print("❌ Erreur : Veuillez entrer des nombres valides pour les stats")
+    except:
         input("\nAppuyez sur Entrée pour revenir au menu...")
 
 

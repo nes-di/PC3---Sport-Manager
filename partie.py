@@ -40,19 +40,8 @@ def jouer_match():
     for i, equipe in enumerate(equipes_adverses, 1):
         print(f"  {i}. {equipe}")
     
-    try:
-        choix = int(input("\nVotre choix : ").strip())
-        if choix < 1 or choix > len(equipes_adverses):
-            print("❌ Choix invalide")
-            conn.close()
-            input("\nAppuyez sur Entrée pour revenir au menu...")
-            return
-        adversaire = equipes_adverses[choix - 1]
-    except ValueError:
-        print("❌ Veuillez entrer un nombre valide")
-        conn.close()
-        input("\nAppuyez sur Entrée pour revenir au menu...")
-        return
+    choix = int(input("\nVotre choix : ").strip())
+    adversaire = equipes_adverses[choix - 1]
     
     # Vérification des joueurs disponibles
     cursor.execute("""
@@ -89,8 +78,8 @@ def jouer_match():
             score_ol = int(input("\nScore de l'OL : "))
             score_adversaire_input = int(input(f"Score de {adversaire} : "))
             break  # Si on arrive ici, les scores sont valides
-        except ValueError:
-            print("❌ Veuillez entrer des nombres valides. Réessayez.")
+        except:
+            pass
     
     # Enregistrement du match
     cursor.execute("""
