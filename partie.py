@@ -108,10 +108,22 @@ def jouer_match():
         while True:
             try:
                 score_ol = int(input("\nScore de l'OL : "))
-                score_adversaire = int(input(f"Score de {nom_adversaire} : "))
+                if score_ol < 0:
+                    print("❌ Le score ne peut pas être négatif")
+                    continue
                 break
-            except:
-                print("❌ Veuillez entrer des nombres valides")
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide")
+        
+        while True:
+            try:
+                score_adversaire = int(input(f"Score de {nom_adversaire} : "))
+                if score_adversaire < 0:
+                    print("❌ Le score ne peut pas être négatif")
+                    continue
+                break
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide")
         
         # Création de la rencontre
         cursor.execute("""

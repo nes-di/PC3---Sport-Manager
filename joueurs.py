@@ -47,15 +47,65 @@ def ajouter_joueur():
         for i, poste in enumerate(postes, 1):
             print(f"  {i}. {poste['nom_poste']}")
         
-        choix_poste = int(input("\nChoisissez le poste (numéro) : "))
+        # Boucle de validation du choix du poste
+        while True:
+            try:
+                choix_poste = int(input("\nChoisissez le poste (numéro) : "))
+                if 1 <= choix_poste <= len(postes):
+                    break
+                else:
+                    print(f"❌ Veuillez choisir un nombre entre 1 et {len(postes)}")
+            except ValueError:
+                print(f"❌ Veuillez entrer un nombre valide entre 1 et {len(postes)}")
+        
         id_poste = postes[choix_poste - 1]['id_poste']
         
         # Saisie des compétences
         print("\nCompétences (0-100) :")
-        vitesse = int(input("Vitesse : "))
-        endurance = int(input("Endurance : "))
-        force = int(input("Force : "))
-        technique = int(input("Technique : "))
+        
+        # Vitesse
+        while True:
+            try:
+                vitesse = int(input("Vitesse : "))
+                if 0 <= vitesse <= 100:
+                    break
+                else:
+                    print("❌ Veuillez entrer un nombre entre 0 et 100")
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide entre 0 et 100")
+        
+        # Endurance
+        while True:
+            try:
+                endurance = int(input("Endurance : "))
+                if 0 <= endurance <= 100:
+                    break
+                else:
+                    print("❌ Veuillez entrer un nombre entre 0 et 100")
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide entre 0 et 100")
+        
+        # Force
+        while True:
+            try:
+                force = int(input("Force : "))
+                if 0 <= force <= 100:
+                    break
+                else:
+                    print("❌ Veuillez entrer un nombre entre 0 et 100")
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide entre 0 et 100")
+        
+        # Technique
+        while True:
+            try:
+                technique = int(input("Technique : "))
+                if 0 <= technique <= 100:
+                    break
+                else:
+                    print("❌ Veuillez entrer un nombre entre 0 et 100")
+            except ValueError:
+                print("❌ Veuillez entrer un nombre valide entre 0 et 100")
         
         # Insertion du joueur
         cursor.execute("""
