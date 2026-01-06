@@ -26,14 +26,7 @@ def ajouter_joueur():
     try:
         # Récupération de l'ID de l'OL
         cursor.execute("SELECT id_equipe FROM Equipe WHERE nom = 'OL'")
-        result = cursor.fetchone()
-        if not result:
-            print("❌ Équipe OL non trouvée")
-            conn.close()
-            input("\nAppuyez sur Entrée pour revenir au menu...")
-            return
-        
-        id_ol = result['id_equipe']
+        id_ol = cursor.fetchone()['id_equipe']
         
         # Saisie des informations
         prenom = input("Prénom du joueur : ").strip()
