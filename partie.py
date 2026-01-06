@@ -50,7 +50,17 @@ def jouer_match():
         for i, equipe in enumerate(equipes_adverses, 1):
             print(f"  {i}. {equipe['nom']}")
         
-        choix = int(input("\nVotre choix : ").strip())
+        # Boucle de validation du choix
+        while True:
+            try:
+                choix = int(input("\nVotre choix : ").strip())
+                if 1 <= choix <= len(equipes_adverses):
+                    break
+                else:
+                    print(f"❌ Veuillez choisir un nombre entre 1 et {len(equipes_adverses)}")
+            except ValueError:
+                print(f"❌ Veuillez entrer un nombre valide entre 1 et {len(equipes_adverses)}")
+        
         equipe_adverse = equipes_adverses[choix - 1]
         id_adversaire = equipe_adverse['id_equipe']
         nom_adversaire = equipe_adverse['nom']
