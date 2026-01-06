@@ -82,9 +82,10 @@ def jouer_match():
         if joueurs_blesses:
             print("\n🤕 Joueurs blessés (ne jouent pas) :")
             for joueur in joueurs_blesses:
-                prenom = joueur['prenom'] or ""
+                prenom = joueur['prenom']
+                nom = joueur['nom']
                 matchs = joueur['matchs_restants']
-                print(f"  - {prenom} {joueur['nom']} ({joueur['nom_poste']}) - {matchs} match{'s' if matchs > 1 else ''}")
+                print(f"  - {prenom} {nom} ({joueur['nom_poste']}) - {matchs} match{'s' if matchs > 1 else ''}")
         
         if len(joueurs_disponibles) < 11:
             print(f"\n❌ Pas assez de joueurs disponibles pour jouer un match 11v11")
@@ -171,14 +172,15 @@ def jouer_match():
                 WHERE id_joueur = ? AND id_competence = ?
             """, (bonus, joueur['id_joueur'], competence_choisie['id_competence']))
             
-            prenom = joueur['prenom'] or ""
-            print(f"  ✓ {prenom} {joueur['nom']} : +{bonus} {competence_choisie['nom']}")
+            prenom = joueur['prenom']
+            nom = joueur['nom']
+            print(f"  ✓ {prenom} {nom} : +{bonus} {competence_choisie['nom']}")
         
-        # Blessures aléatoires (7% de chance par joueur)
+        # Blessures aléatoires (2% de chance par joueur)
         print("\n🏥 Bilan médical...")
         blessures_survenues = False
         for joueur in joueurs_disponibles:
-            if random.random() < 0.07:
+            if random.random() < 0.02:
                 # Blessure de 1 à 3 matchs
                 matchs_blessure = random.randint(1, 3)
                 
@@ -187,8 +189,9 @@ def jouer_match():
                     VALUES (?, ?, ?)
                 """, (joueur['id_joueur'], matchs_blessure, "Blessure lors du match"))
                 
-                prenom = joueur['prenom'] or ""
-                print(f"  🤕 {prenom} {joueur['nom']} s'est blessé ! (absent {matchs_blessure} match{'s' if matchs_blessure > 1 else ''})")
+                prenom = joueur['prenom']
+                nom = joueur['nom']
+                print(f"  🤕 {prenom} {nom} s'est blessé ! (absent {matchs_blessure} match{'s' if matchs_blessure > 1 else ''})")
                 blessures_survenues = True
         
         if not blessures_survenues:
@@ -206,11 +209,12 @@ def jouer_match():
                 """, (joueur['id_joueur'],))
                 
                 nouveau_compte = joueur['matchs_restants'] - 1
-                prenom = joueur['prenom'] or ""
+                prenom = joueur['prenom']
+                nom = joueur['nom']
                 if nouveau_compte == 0:
-                    print(f"  ✓ {prenom} {joueur['nom']} est rétabli !")
+                    print(f"  ✓ {prenom} {nom} est rétabli !")
                 else:
-                    print(f"  ⏳ {prenom} {joueur['nom']} : encore {nouveau_compte} match{'s' if nouveau_compte > 1 else ''}")
+                    print(f"  ⏳ {prenom} {nom} : encore {nouveau_compte} match{'s' if nouveau_compte > 1 else ''}")
         
         conn.commit()
         print("\n✓ Match enregistré avec succès")
